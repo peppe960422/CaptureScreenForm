@@ -15,6 +15,7 @@ namespace CaptureScreenForm
         private readonly Pen pen = new Pen(new SolidBrush(Color.Red), 3) { DashStyle = DashStyle.DashDotDot };
         private bool isSelecting = false;   
         private System.Windows.Forms.PictureBox pictureBoxScreenshoot;
+        private Form CallerForm = null; 
        
         private System.ComponentModel.IContainer components = null;
 
@@ -60,9 +61,9 @@ namespace CaptureScreenForm
         }
 
   
-
+     
     
-        public Capture(int indexOfScreen = -1)
+        public Capture(Form? aufrufer,int indexOfScreen = -1)
         {
             InitializeComponent();
             this.IndexOfScreen = indexOfScreen;
@@ -74,7 +75,7 @@ namespace CaptureScreenForm
             this.Top = 0;
             this.Left = 0;
 
-
+            if (aufrufer != null) { CallerForm = aufrufer; aufrufer.Show(); }
             pictureBoxScreenshoot.Dock = DockStyle.Fill;
         }
 
@@ -107,7 +108,9 @@ namespace CaptureScreenForm
         private void Capture_Load(object sender, EventArgs e)
         {
             this.Hide();
-
+            if (CallerForm != null) { this.CallerForm.Show(); }         
+               
+           
             float dpiScale = GetScalingFactor();
             Screen currentScreen;
             if (IndexOfScreen == -1)
@@ -124,6 +127,7 @@ namespace CaptureScreenForm
             screenshot = new Bitmap(actualWidth, actualHeight);
             using (Graphics g = Graphics.FromImage(screenshot))
             {
+                
                 g.CopyFromScreen(bounds.X, bounds.Y, 0, 0, new Size(actualWidth, actualHeight));
             }
 
